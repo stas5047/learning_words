@@ -133,7 +133,7 @@ function renderTestQuestion() {
             Question ${questionNumber} of ${testState.totalQuestions}
           </span>
           <span class="text-sm font-medium text-primary">
-            Score: ${testState.correctCount}/${questionNumber - 1}
+            Score: ${testState.correctCount}/${testState.currentQuestionIndex > 0 ? testState.currentQuestionIndex : 0}
           </span>
         </div>
         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
@@ -388,9 +388,12 @@ function attachTestQuestionListeners() {
   // Submit answer button
   const submitBtn = document.getElementById('submit-answer-btn');
   if (submitBtn) {
-    submitBtn.addEventListener('click', () => {
-      if (!currentAnswer) return;
+    let isSubmitting = false; // Prevent double submission
 
+    submitBtn.addEventListener('click', () => {
+      if (!currentAnswer || isSubmitting) return;
+
+      isSubmitting = true; // Lock to prevent double-click
       const result = submitAnswer(currentAnswer);
 
       if (result) {

@@ -44,6 +44,17 @@
   @apply input-field pl-10;
 }
 
+/* Fix for select elements in dark mode */
+select.input-field {
+  @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100;
+}
+
+/* Fix for file input labels in dark mode */
+input[type="file"] + label,
+label:has(input[type="file"]) {
+  @apply text-gray-800 dark:text-gray-200;
+}
+
 /* Navigation link styles */
 .nav-link {
   @apply text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary
@@ -101,7 +112,7 @@
 
 /* Modal backdrop */
 .modal-backdrop {
-  @apply fixed inset-0 bg-black bg-opacity-50 z-40
+  @apply fixed inset-0 bg-black bg-opacity-50 z-50
          flex items-center justify-center p-4;
   animation: fadeIn 0.2s ease-out;
 }
@@ -137,7 +148,7 @@
 .test-option {
   @apply w-full p-4 text-left rounded-lg border-2 border-gray-300 dark:border-gray-600
          hover:border-primary hover:bg-blue-50 dark:hover:bg-blue-900/20
-         transition-all font-medium;
+         transition-all font-medium text-gray-900 dark:text-gray-100;
 }
 
 .test-option.correct {
@@ -151,7 +162,9 @@
 }
 
 .test-option.selected {
-  @apply border-primary bg-blue-50 dark:bg-blue-900/20;
+  @apply border-primary bg-blue-100 dark:bg-blue-900/40
+         shadow-md text-gray-900 dark:text-gray-100;
+  font-weight: 600;
 }
 
 /* Empty state */
@@ -206,4 +219,15 @@
 /* Utility classes */
 .text-gradient {
   @apply bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent;
+}
+
+/* App layout - ensure footer stays at bottom */
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#main-content {
+  flex: 1;
 }
