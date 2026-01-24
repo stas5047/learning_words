@@ -112,7 +112,7 @@ export function renderWordManagementPage() {
           <!-- Search Bar -->
           <div class="mb-4">
             <div class="relative">
-              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="search-icon absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="${searchTerm ? 'opacity: 0; visibility: hidden;' : 'opacity: 1; visibility: visible;'}">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
               </svg>
               <input
@@ -201,6 +201,8 @@ function attachWordManagementListeners() {
 
   // Search input
   const searchInput = document.getElementById('search-words');
+  const searchIcon = document.querySelector('.search-icon');
+
   if (searchInput) {
     const debouncedSearch = debounce((term) => {
       searchTerm = term;
@@ -208,7 +210,14 @@ function attachWordManagementListeners() {
     }, 300);
 
     searchInput.addEventListener('input', (e) => {
-      debouncedSearch(e.target.value);
+      const value = e.target.value;
+      debouncedSearch(value);
+
+      // Toggle search icon visibility
+      if (searchIcon) {
+        searchIcon.style.opacity = value ? '0' : '1';
+        searchIcon.style.visibility = value ? 'hidden' : 'visible';
+      }
     });
   }
 

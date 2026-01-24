@@ -133,7 +133,7 @@ function renderTestQuestion() {
             Question ${questionNumber} of ${testState.totalQuestions}
           </span>
           <span class="text-sm font-medium text-primary">
-            Score: ${testState.correctCount}/${testState.currentQuestionIndex > 0 ? testState.currentQuestionIndex : 0}
+            ${testState.correctCount} correct / ${testState.totalQuestions} questions
           </span>
         </div>
         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
