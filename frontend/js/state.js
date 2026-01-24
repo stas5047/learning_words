@@ -24,6 +24,9 @@ export function initState() {
       state.words = JSON.parse(savedWords);
     } catch (e) {
       console.error('Failed to parse saved words:', e);
+      state.words = [];
+      // Clear corrupted data
+      localStorage.removeItem('wordApp_words');
     }
   }
 
@@ -53,12 +56,17 @@ export function setState(key, value) {
   state[key] = value;
 
   // Save to localStorage for persistent data
-  if (key === 'words') {
-    localStorage.setItem('wordApp_words', JSON.stringify(value));
-  } else if (key === 'theme') {
-    localStorage.setItem('wordApp_theme', value);
-  } else if (key === 'testHistory') {
-    localStorage.setItem('wordApp_testHistory', JSON.stringify(value));
+  try {
+    if (key === 'words') {
+      localStorage.setItem('wordApp_words', JSON.stringify(value));
+    } else if (key === 'theme') {
+      localStorage.setItem('wordApp_theme', value);
+    } else if (key === 'testHistory') {
+      localStorage.setItem('wordApp_testHistory', JSON.stringify(value));
+    }
+  } catch (e) {
+    console.error('Failed to save to localStorage:', e);
+    // Note: Could show user notification here if needed
   }
 
   // Notify listeners

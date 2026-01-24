@@ -1,21 +1,27 @@
 // Word Management page view
 
-import { getWords, addWord, updateWord, deleteWord, importWords, exportWords, searchWords } from '../modules/wordManager.js';
+import { getWords, addWord, updateWord, deleteWord, importWords, exportWords, searchWords, clearAllWords, getWordById } from '../modules/wordManager.js';
 import { createWordCard, createWordListEmpty } from '../components/wordCard.js';
 import { showConfirmDialog, showEditWordDialog } from '../components/modal.js';
 import { showError, showSuccess } from '../components/notification.js';
-import { debounce } from '../utils.js';
+import { debounce, escapeHtml, validateWordInput } from '../utils.js';
 import { subscribe } from '../state.js';
 
 let searchTerm = '';
+let unsubscribe = null;
 
 export function renderWordManagementPage() {
   const words = getWords();
   const filteredWords = searchTerm ? searchWords(searchTerm) : words;
 
+  // Clean up previous subscription
+  if (unsubscribe) {
+    unsubscribe();
+  }
+
   setTimeout(() => {
     attachWordManagementListeners();
-    subscribe('words', () => {
+    unsubscribe = subscribe('words', () => {
       renderWordList();
     });
   }, 0);
@@ -75,7 +81,7 @@ export function renderWordManagementPage() {
 
               <div class="space-y-3">
                 <label class="btn-secondary w-full cursor-pointer block text-center">
-                  <input type="file" id="import-file" accept=".txt" class="hidden">
+                  <input type="file" id="import-file" accept=".txt,.csv,.tsv,text/*" class="hidden">
                   <span class="flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
@@ -178,8 +184,13 @@ function attachWordManagementListeners() {
     addWordForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const foreign = document.getElementById('foreign-word').value;
-      const translation = document.getElementById('translation').value;
+      const foreign = document.getElementById('foreign-word').value.trim();
+      const translation = document.getElementById('translation').value.trim();
+
+      if (!foreign || !translation) {
+        showError('Both fields are required and cannot be empty or whitespace only');
+        return;
+      }
 
       if (addWord(foreign, translation)) {
         addWordForm.reset();
@@ -215,6 +226,7 @@ function attachWordManagementListeners() {
       };
       reader.onerror = () => {
         showError('Failed to read file');
+        importFile.value = ''; // Reset file input on error
       };
       reader.readAsText(file);
     });
@@ -236,7 +248,6 @@ function attachWordManagementListeners() {
         'Clear All Words',
         'Are you sure you want to delete all words? This action cannot be undone.',
         () => {
-          const { clearAllWords } = require('../modules/wordManager.js');
           clearAllWords();
         }
       );
@@ -263,7 +274,6 @@ function attachWordManagementListeners() {
 }
 
 function handleEditWord(wordId) {
-  const { getWordById } = require('../modules/wordManager.js');
   const word = getWordById(wordId);
 
   if (!word) {
@@ -280,7 +290,6 @@ function handleEditWord(wordId) {
 }
 
 function handleDeleteWord(wordId) {
-  const { getWordById } = require('../modules/wordManager.js');
   const word = getWordById(wordId);
 
   if (!word) {
@@ -290,7 +299,7 @@ function handleDeleteWord(wordId) {
 
   showConfirmDialog(
     'Delete Word',
-    `Are you sure you want to delete "${word.foreign}"?`,
+    `Are you sure you want to delete "${escapeHtml(word.foreign)}"?`,
     () => {
       deleteWord(wordId);
     }

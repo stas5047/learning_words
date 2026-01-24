@@ -12,8 +12,8 @@ export function createWordCard(word) {
       <div class="flex justify-between items-start gap-4">
         <!-- Word Content -->
         <div class="flex-1 min-w-0">
-          <h3 class="font-bold text-lg mb-1 truncate">${foreign}</h3>
-          <p class="text-gray-600 dark:text-gray-400 truncate">${translation}</p>
+          <h3 class="font-bold text-lg mb-1 truncate" title="${foreign}">${foreign}</h3>
+          <p class="text-gray-600 dark:text-gray-400 truncate" title="${translation}">${translation}</p>
           ${category ? `<span class="badge-primary mt-2">${category}</span>` : ''}
         </div>
 

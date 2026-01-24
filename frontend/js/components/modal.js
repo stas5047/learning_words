@@ -1,5 +1,8 @@
 // Modal dialog component
 
+import { escapeHtml, validateWordInput } from '../utils.js';
+import { showError } from './notification.js';
+
 let currentModal = null;
 
 export function createModal(title, content, actions = []) {
@@ -28,7 +31,7 @@ export function createModal(title, content, actions = []) {
       <div class="modal-content">
         <!-- Modal Header -->
         <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
-          <h3 class="text-xl font-bold">${title}</h3>
+          <h3 class="text-xl font-bold">${escapeHtml(title)}</h3>
           <button onclick="window.closeModal()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -101,7 +104,7 @@ window.closeModal = closeModal;
 export function showConfirmDialog(title, message, onConfirm, onCancel) {
   createModal(
     title,
-    `<p class="text-gray-700 dark:text-gray-300">${message}</p>`,
+    `<p class="text-gray-700 dark:text-gray-300">${escapeHtml(message)}</p>`,
     [
       {
         id: 'cancel-btn',
@@ -135,7 +138,8 @@ export function showEditWordDialog(word, onSave) {
           type="text"
           id="edit-foreign"
           class="input-field"
-          value="${word.foreign || ''}"
+          value="${escapeHtml(word.foreign || '')}"
+          maxlength="100"
           required
         >
       </div>
@@ -145,7 +149,8 @@ export function showEditWordDialog(word, onSave) {
           type="text"
           id="edit-translation"
           class="input-field"
-          value="${word.translation || ''}"
+          value="${escapeHtml(word.translation || '')}"
+          maxlength="100"
           required
         >
       </div>
@@ -170,14 +175,18 @@ export function showEditWordDialog(word, onSave) {
           const foreign = document.getElementById('edit-foreign').value.trim();
           const translation = document.getElementById('edit-translation').value.trim();
 
-          if (foreign && translation) {
-            onSave({
-              ...word,
-              foreign,
-              translation
-            });
-            closeModal();
+          const validation = validateWordInput(foreign, translation);
+          if (!validation.isValid) {
+            showError(validation.errors.join(', '));
+            return;
           }
+
+          onSave({
+            ...word,
+            foreign,
+            translation
+          });
+          closeModal();
         }
       }
     ]
