@@ -18,7 +18,7 @@ export function createModal(title, content, actions = []) {
     return `
       <button
         id="${action.id || ''}"
-        class="${btnClass}"
+        class="${btnClass} min-w-[100px]"
         onclick="window.modalActions['${action.id || ''}']?.()"
       >
         ${action.label}
@@ -28,25 +28,29 @@ export function createModal(title, content, actions = []) {
 
   const modalHtml = `
     <div id="${modalId}" class="modal-backdrop">
-      <div class="modal-content">
+      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <!-- Modal Header -->
-        <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
-          <h3 class="text-xl font-bold">${escapeHtml(title)}</h3>
-          <button onclick="window.closeModal()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex justify-between items-center px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+          <h3 id="modal-title" class="text-xl font-bold text-gray-900 dark:text-gray-100">${escapeHtml(title)}</h3>
+          <button
+            onclick="window.closeModal()"
+            class="p-2 -mr-2 rounded-lg text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
+            aria-label="Close modal"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
           </button>
         </div>
 
         <!-- Modal Content -->
-        <div class="p-6">
+        <div class="px-6 py-6">
           ${content}
         </div>
 
         <!-- Modal Actions -->
         ${actions.length > 0 ? `
-          <div class="flex justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700">
+          <div class="flex justify-end gap-3 px-6 py-5 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 rounded-b-2xl">
             ${actionsHtml}
           </div>
         ` : ''}
@@ -104,7 +108,7 @@ window.closeModal = closeModal;
 export function showConfirmDialog(title, message, onConfirm, onCancel) {
   createModal(
     title,
-    `<p class="text-gray-700 dark:text-gray-300">${escapeHtml(message)}</p>`,
+    `<p class="text-gray-700 dark:text-gray-300 text-base leading-relaxed">${escapeHtml(message)}</p>`,
     [
       {
         id: 'cancel-btn',
