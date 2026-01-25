@@ -23,6 +23,9 @@ export function createNavbar() {
             <a href="#/test" class="nav-link ${currentPath === '/test' ? 'active' : ''}">
               Take Test
             </a>
+            <a href="#/statistics" class="nav-link ${currentPath === '/statistics' ? 'active' : ''}">
+              Statistics
+            </a>
             <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
               <span class="text-2xl">🌙</span>
             </button>
@@ -46,6 +49,9 @@ export function createNavbar() {
           </a>
           <a href="#/test" class="block nav-link ${currentPath === '/test' ? 'active' : ''}">
             Take Test
+          </a>
+          <a href="#/statistics" class="block nav-link ${currentPath === '/statistics' ? 'active' : ''}">
+            Statistics
           </a>
           <div class="pt-2">
             <button id="theme-toggle-mobile" class="btn-icon" aria-label="Toggle theme">

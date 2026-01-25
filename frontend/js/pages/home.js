@@ -75,18 +75,21 @@ export function renderHomePage() {
         </a>
 
         <!-- Statistics Card -->
-        <div class="card-hover group opacity-75 cursor-not-allowed">
-          <div class="text-5xl mb-4 text-center">
+        <a href="#/statistics" class="card-hover group">
+          <div class="text-5xl mb-4 text-center group-hover:scale-110 transition-transform">
             📊
           </div>
           <h2 class="text-2xl font-bold mb-2 text-center">Statistics</h2>
           <p class="text-gray-600 dark:text-gray-400 text-center mb-4">
             Track your progress and performance
           </p>
-          <div class="flex items-center justify-center text-gray-400">
-            <span class="font-medium">Coming Soon</span>
+          <div class="flex items-center justify-center text-primary group-hover:text-blue-600">
+            <span class="font-medium">View Statistics</span>
+            <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
           </div>
-        </div>
+        </a>
       </div>
 
       <!-- Features Section -->

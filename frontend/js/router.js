@@ -3,11 +3,13 @@
 import { renderHomePage } from './pages/home.js';
 import { renderWordManagementPage } from './pages/wordManagement.js';
 import { renderTestingPage } from './pages/testing.js';
+import { renderStatisticsPage } from './pages/statistics.js';
 
 const routes = {
   '/': renderHomePage,
   '/words': renderWordManagementPage,
-  '/test': renderTestingPage
+  '/test': renderTestingPage,
+  '/statistics': renderStatisticsPage
 };
 
 export function initRouter() {

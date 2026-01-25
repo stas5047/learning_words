@@ -313,3 +313,32 @@ label:has(input[type="file"]) {
 .modal-content label {
   @apply text-gray-700 dark:text-gray-300 font-medium;
 }
+
+/* Statistics Page Styles */
+.stats-table th {
+  @apply px-2 py-3 text-left font-semibold text-gray-700 dark:text-gray-300;
+}
+
+.stats-table td {
+  @apply px-2 py-3 border-b border-gray-200 dark:border-gray-700;
+}
+
+.bar-chart-container {
+  @apply flex items-end gap-2;
+  height: 16rem;
+}
+
+.chart-bar {
+  @apply flex-1 flex flex-col items-center justify-end;
+  min-width: 0;
+}
+
+.chart-bar-fill {
+  @apply w-full rounded-t transition-all duration-300;
+  min-height: 2rem;
+}
+
+.chart-bar:hover .chart-bar-fill {
+  @apply shadow-lg;
+  transform: scaleY(1.05);
+}
