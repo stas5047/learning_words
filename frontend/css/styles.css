@@ -50,6 +50,8 @@ textarea.input-field {
 
 .search-input {
   @apply input-field pl-10;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
 }
 
 /* Fix for select elements in dark mode */
@@ -128,10 +130,13 @@ label:has(input[type="file"]) {
 
 /* Modal backdrop */
 .modal-backdrop {
-  @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+  @apply fixed inset-0 z-50 p-4;
   background-color: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(4px);
   animation: fadeIn 0.25s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @keyframes fadeIn {
@@ -152,6 +157,7 @@ label:has(input[type="file"]) {
               0 0 0 1px rgba(0, 0, 0, 0.1);
   animation: scaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
+  margin: 0 auto;
 }
 
 .dark .modal-content {
@@ -193,9 +199,14 @@ label:has(input[type="file"]) {
 }
 
 .test-option.selected {
-  @apply border-primary bg-blue-100 dark:bg-blue-900/40
+  @apply bg-blue-100 dark:bg-blue-900/40
          shadow-md text-gray-900 dark:text-gray-100;
   font-weight: 600;
+  border: 3px solid #000000;
+}
+
+.dark .test-option.selected {
+  border: 3px solid #FFFFFF;
 }
 
 /* Empty state */
