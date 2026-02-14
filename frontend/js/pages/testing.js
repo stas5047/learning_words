@@ -368,6 +368,21 @@ function attachTestQuestionListeners() {
   // Text input
   const textInput = document.getElementById('text-answer');
   if (textInput) {
+    // Add placeholder clearing handlers
+    const originalPlaceholder = textInput.getAttribute('placeholder');
+
+    textInput.addEventListener('focus', () => {
+      textInput.setAttribute('data-placeholder', originalPlaceholder);
+      textInput.setAttribute('placeholder', '');
+    });
+
+    textInput.addEventListener('blur', () => {
+      const storedPlaceholder = textInput.getAttribute('data-placeholder');
+      if (storedPlaceholder && textInput.value === '') {
+        textInput.setAttribute('placeholder', storedPlaceholder);
+      }
+    });
+
     textInput.addEventListener('input', (e) => {
       currentAnswer = e.target.value;
 
