@@ -1,6 +1,6 @@
 // Word Management page view
 
-import { getWords, addWord, updateWord, deleteWord, importWords, exportWords, searchWords, clearAllWords, getWordById } from '../modules/wordManager.js';
+import { getWords, addWord, updateWord, deleteWord, importWords, exportWords, searchWords, clearAllWords, getWordById, getAllCategories } from '../modules/wordManager.js';
 import { createWordCard, createWordListEmpty } from '../components/wordCard.js';
 import { showConfirmDialog, showEditWordDialog } from '../components/modal.js';
 import { showError, showSuccess } from '../components/notification.js';
@@ -61,6 +61,32 @@ export function renderWordManagementPage() {
                   class="input-field"
                   placeholder="e.g., Привет"
                   required
+                  autocomplete="off"
+                >
+              </div>
+
+              <div>
+                <label for="category" class="block text-sm font-medium mb-2">
+                  Category
+                </label>
+                <select
+                  id="category"
+                  class="input-field"
+                  required
+                >
+                  <option value="">Select a category</option>
+                </select>
+              </div>
+
+              <div id="custom-category-container" style="display: none;">
+                <label for="custom-category" class="block text-sm font-medium mb-2">
+                  Custom Category Name
+                </label>
+                <input
+                  type="text"
+                  id="custom-category"
+                  class="input-field"
+                  placeholder="e.g., colors"
                   autocomplete="off"
                 >
               </div>
@@ -177,7 +203,96 @@ function renderWordList() {
   }
 }
 
+function populateCategoryDropdown() {
+  const categorySelect = document.getElementById('category');
+  if (!categorySelect) return;
+
+  const categories = getAllCategories();
+
+  // Common categories to always show
+  const defaultCategories = ['greetings', 'polite', 'food', 'objects', 'people', 'places', 'adjectives', 'verbs', 'basic', 'time'];
+
+  // Merge and deduplicate
+  const allCategories = Array.from(new Set([...defaultCategories, ...categories])).filter(c => c !== 'uncategorized' && c !== 'imported').sort();
+
+  // Clear existing options except the first one
+  categorySelect.innerHTML = '<option value="">Select a category</option>';
+
+  // Add all categories
+  allCategories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+    categorySelect.appendChild(option);
+  });
+
+  // Add "Other" option at the end
+  const otherOption = document.createElement('option');
+  otherOption.value = 'other';
+  otherOption.textContent = 'Other';
+  categorySelect.appendChild(otherOption);
+}
+
+function attachPlaceholderHandlers() {
+  const inputs = [
+    document.getElementById('foreign-word'),
+    document.getElementById('translation'),
+    document.getElementById('search-words'),
+    document.getElementById('custom-category')
+  ];
+
+  inputs.forEach(input => {
+    if (!input) return;
+
+    // Store original placeholder
+    const originalPlaceholder = input.getAttribute('placeholder');
+
+    // Clear placeholder on focus
+    input.addEventListener('focus', () => {
+      input.setAttribute('data-placeholder', originalPlaceholder);
+      input.setAttribute('placeholder', '');
+    });
+
+    // Restore placeholder on blur if empty
+    input.addEventListener('blur', () => {
+      const storedPlaceholder = input.getAttribute('data-placeholder');
+      if (storedPlaceholder && input.value === '') {
+        input.setAttribute('placeholder', storedPlaceholder);
+      }
+    });
+  });
+}
+
 function attachWordManagementListeners() {
+  // Populate category dropdown
+  populateCategoryDropdown();
+
+  // Add placeholder clearing on focus/blur for input fields
+  attachPlaceholderHandlers();
+
+  // Handle category dropdown change
+  const categorySelect = document.getElementById('category');
+  const customCategoryContainer = document.getElementById('custom-category-container');
+  const customCategoryInput = document.getElementById('custom-category');
+
+  if (categorySelect && customCategoryContainer) {
+    categorySelect.addEventListener('change', (e) => {
+      if (e.target.value === 'other') {
+        customCategoryContainer.style.display = 'block';
+        if (customCategoryInput) {
+          customCategoryInput.required = true;
+          customCategoryInput.focus();
+        }
+      } else {
+        customCategoryContainer.style.display = 'none';
+        if (customCategoryInput) {
+          customCategoryInput.required = false;
+          customCategoryInput.value = '';
+        }
+      }
+    });
+  }
+
   // Add word form submission
   const addWordForm = document.getElementById('add-word-form');
   if (addWordForm) {
@@ -186,14 +301,35 @@ function attachWordManagementListeners() {
 
       const foreign = document.getElementById('foreign-word').value.trim();
       const translation = document.getElementById('translation').value.trim();
+      let category = document.getElementById('category').value;
 
       if (!foreign || !translation) {
         showError('Both fields are required and cannot be empty or whitespace only');
         return;
       }
 
-      if (addWord(foreign, translation)) {
+      if (!category) {
+        showError('Please select a category');
+        return;
+      }
+
+      // Handle custom category
+      if (category === 'other') {
+        const customCategory = document.getElementById('custom-category').value.trim().toLowerCase();
+        if (!customCategory) {
+          showError('Please enter a custom category name');
+          return;
+        }
+        category = customCategory;
+      }
+
+      if (addWord(foreign, translation, category)) {
         addWordForm.reset();
+        customCategoryContainer.style.display = 'none';
+        if (customCategoryInput) {
+          customCategoryInput.required = false;
+        }
+        populateCategoryDropdown(); // Refresh category dropdown
         document.getElementById('foreign-word').focus();
       }
     });
