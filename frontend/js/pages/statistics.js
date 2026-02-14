@@ -23,9 +23,6 @@ export function renderStatisticsPage() {
       <!-- Overview Cards -->
       ${renderOverviewCards(stats)}
 
-      <!-- Score History Chart -->
-      ${renderScoreHistory(history)}
-
       <!-- Mode Comparison -->
       ${renderModeComparison(history)}
 
@@ -171,15 +168,13 @@ function renderModeComparison(history) {
 }
 
 function renderHistoryTable(history) {
-  const recentTests = history.slice(0, 10);
-
-  if (recentTests.length === 0) {
+  if (history.length === 0) {
     return '';
   }
 
   return `
     <div class="card">
-      <h2 class="text-2xl font-bold mb-4">Recent Tests</h2>
+      <h2 class="text-2xl font-bold mb-4">Score History</h2>
       <div class="overflow-x-auto">
         <table class="w-full stats-table">
           <thead>
@@ -192,7 +187,7 @@ function renderHistoryTable(history) {
             </tr>
           </thead>
           <tbody>
-            ${recentTests.map(test => `
+            ${history.map(test => `
               <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
                 <td class="py-3 px-2">${formatDate(test.date)}</td>
                 <td class="py-3 px-2">
